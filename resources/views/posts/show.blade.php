@@ -21,6 +21,12 @@
         <p class="blog-post-meta">{{ $post->created_at->toDayDateTimeString() }} by <a href="#">{{ $post->author->name }}</a></p>
 
         {{ $post->body }}
+
+        <p class="blog-post-meta">
+            @foreach ( $post->tags as $tag )
+                <span class="badge">{{ $tag->name }}</span>
+            @endforeach
+        </p>
     </div><!-- /.blog-post -->
 
 </div><!-- /.blog-main -->

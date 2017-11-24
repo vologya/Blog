@@ -34,6 +34,15 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="tags" class="control-label">Tags</label>
+                        <select class="form-control" name="tags[]" id="tags" multiple="multiple">
+                            @foreach ($tags as $tag)
+                                <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <button type="submit" class="btn btn-primary">
                             Post
                         </button>
@@ -44,5 +53,18 @@
         </div>
     </div>
 </div>
+
+@endsection
+
+@section ('scripts')
+
+<script>
+    $(document).ready(function() {
+        $("#tags").select2({
+            tags: true,
+            tokenSeparators: [',', ' ']
+        });
+    });
+</script>
 
 @endsection

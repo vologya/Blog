@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Tag;
 use App\Post;
 use Illuminate\Http\Request;
 
@@ -25,7 +26,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::latest()->with('author')->paginate(10);
+        $posts = Post::latest()->with('author', 'tags')->paginate(10);
 
         return view('posts.index', compact('posts'));
     }
@@ -37,7 +38,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create');
+        $tags = Tag::orderBy('name')->get();
+
+        return view('posts.create', compact('tags'));
     }
 
     /**
@@ -50,12 +53,20 @@ class PostController extends Controller
     {
         $validatedData = $request->validate([
             'title' => 'required|min:5|max:255',
-            'body' => 'required|min:10'
+            'body' => 'required|min:10',
+            'tags' => 'array',
         ]);
+
+        foreach ($validatedData['tags'] as $key => $value) {
+            $validatedData['tags'][$key] = is_numeric($value)
+                ? Tag::findOrFail($value)->id
+                : Tag::firstOrCreate(['name' => $value])->id;
+        }
 
         $post = Post::make($validatedData);
         $post->author()->associate( auth()->user() );
         $post->save();
+        $post->tags()->attach( $validatedData['tags'] );
 
         return redirect()->route( 'posts.show', $post );
     }
@@ -80,8 +91,10 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         $this->authorize( 'update', $post );
+
+        $tags = Tag::orderBy('name')->get();
         
-        return view('posts.edit', compact('post'));
+        return view('posts.edit', compact('post', 'tags'));
     }
 
     /**
@@ -97,11 +110,19 @@ class PostController extends Controller
 
         $validatedData = $request->validate([
             'title' => 'required|min:5|max:255',
-            'body' => 'required|min:10'
+            'body' => 'required|min:10',
+            'tags' => 'array',
         ]);
+
+        foreach ($validatedData['tags'] as $key => $value) {
+            $validatedData['tags'][$key] = is_numeric($value)
+                ? Tag::findOrFail($value)->id
+                : Tag::firstOrCreate(['name' => $value])->id;
+        }
 
         $post->update($validatedData);
         $post->save();
+        $post->tags()->sync( $validatedData['tags'] );
 
         return redirect()->route( 'posts.show', $post );
     }

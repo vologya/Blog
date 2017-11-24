@@ -1,5 +1,6 @@
 <?php
 
+use App\Tag;
 use App\Post;
 use App\User;
 use Illuminate\Database\Seeder;
@@ -15,6 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         DB::transaction( function() {
+            $faker = \Faker\Factory::create();
 
             factory( User::class )
                 ->create([
@@ -24,11 +26,15 @@ class DatabaseSeeder extends Seeder
                 ]);
 
             $users = factory( User::class, 10 )->create();
-
+            $tags = factory( Tag::class, 20 )->create();
             $posts = factory( Post::class, 50 )->make(['user_id' => 1]);
+
             foreach ($posts as $post) {
                 $post->author()->associate( $users->random()->id );
                 $post->save();
+                $post->tags()->attach(
+                    $faker->randomElements( $tags->pluck('id')->all(), rand(2,5) )
+                );
             }
 
         });

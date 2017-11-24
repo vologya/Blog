@@ -17,3 +17,4 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/', 'PostController@index');
 Route::resource('posts', 'PostController');
+

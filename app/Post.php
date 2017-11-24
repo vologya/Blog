@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Tag;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -47,6 +48,16 @@ class Post extends Model
     public function author()
     {
         return $this->belongsTo( User::class, 'user_id' );
+    }
+
+    /**
+     * Get the tags associated with the post
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function tags()
+    {
+        return $this->belongsToMany( Tag::class );
     }
 
     /**
