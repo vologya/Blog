@@ -4,6 +4,7 @@ namespace App;
 
 use App\Tag;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
@@ -58,6 +59,33 @@ class Post extends Model
     public function tags()
     {
         return $this->belongsToMany( Tag::class );
+    }
+
+    /**
+     * Scope a query to only include filtered posts.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param mixed $filters
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFilter($query, $filters)
+    {
+        if ( isset($filters['year']) ) {
+            $query->whereYear('created_at', $filters['year']);
+        }
+        if ( isset($filters['month']) ) {
+            $query->whereMonth('created_at', Carbon::parse($filters['month'])->month);
+        }
+        if ( isset($filters['tag']) ) {
+            $query->whereIn(
+                'id', 
+                ($tag = Tag::whereName($filters['tag'])->first())
+                    ? $tag->posts->pluck('id')
+                    : []
+            );
+        }
+
+        return $query;
     }
 
     /**

@@ -26,7 +26,10 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::latest()->with('author', 'tags')->paginate(10);
+        $posts = Post::latest()
+            ->with('author', 'tags')
+            ->filter(request(['year', 'month', 'tag']))
+            ->paginate(10);
 
         return view('posts.index', compact('posts'));
     }

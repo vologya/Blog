@@ -6,25 +6,31 @@
     <div class="sidebar-module">
         <h4>Archives</h4>
         <ol class="list-unstyled">
-            <li><a href="#">March 2014</a></li>
-            <li><a href="#">February 2014</a></li>
-            <li><a href="#">January 2014</a></li>
-            <li><a href="#">December 2013</a></li>
-            <li><a href="#">November 2013</a></li>
-            <li><a href="#">October 2013</a></li>
-            <li><a href="#">September 2013</a></li>
-            <li><a href="#">August 2013</a></li>
-            <li><a href="#">July 2013</a></li>
-            <li><a href="#">June 2013</a></li>
-            <li><a href="#">May 2013</a></li>
-            <li><a href="#">April 2013</a></li>
+            @foreach ( $archives as $archive )
+                <li>
+                    <a href="{{ route('posts.index',
+                        ['year' => $archive->year, 'month' => $archive->month]) }}">
+                        <div class="col-sm-7">
+                            {{ $archive->month }} {{ $archive->year }}
+                        </div>
+                        <span class="badge">{{ $archive->posts }}</span>
+                    </a>
+                </li>
+            @endforeach
         </ol>
     </div>
     <div class="sidebar-module">
         <h4>Tags</h4>
         <ol class="list-unstyled">
             @foreach ($tags as $tag)
-                <li><a href="">{{ $tag->name }}</a></li>
+                <li>
+                    <a href="{{ route('posts.index', ['tag' => $tag->name]) }}">
+                        <div class="col-sm-7">
+                            {{ $tag->name }}
+                        </div>
+                        <span class="badge">{{ $tag->posts_count }}</span>
+                    </a>
+                </li>
             @endforeach
         </ol>
     </div>
