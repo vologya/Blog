@@ -13,7 +13,7 @@ class Post extends Model
      *
      * @var array
      */
-    protected $fillable = ['title', 'body'];
+    protected $fillable = ['title', 'body', 'slug'];
 
     /**
      * The "booting" method of the model.
@@ -24,7 +24,7 @@ class Post extends Model
     {
         parent::boot();
 
-        static::created( function($post) {
+        static::created(function ($post) {
             $post->update(['slug' => $post->title]);
         });
     }
@@ -47,6 +47,17 @@ class Post extends Model
     public function author()
     {
         return $this->belongsTo( User::class, 'user_id' );
+    }
+
+    /**
+     * Set the slug when the title changes.
+     *
+     * @param string $value
+     */
+    public function setTitleAttribute($value)
+    {
+        $this->attributes['title'] = $value;
+        $this->update(['slug' => $value]);
     }
 
     /**

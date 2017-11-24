@@ -27,7 +27,7 @@ class PostController extends Controller
     {
         $posts = Post::latest()->with('author')->paginate(10);
 
-        return view('posts.index', compact($posts));
+        return view('posts.index', compact('posts'));
     }
 
     /**
@@ -68,7 +68,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return view('posts.show', compact($post));
+        return view('posts.show', compact('post'));
     }
 
     /**
@@ -79,7 +79,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        return view('posts.edit', compact($post));
+        return view('posts.edit', compact('post'));
     }
 
     /**
