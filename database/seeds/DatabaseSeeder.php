@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             $posts = factory( Post::class, 50 )->make(['user_id' => 1]);
 
             foreach ($posts as $post) {
+                $post->created_at = $post->updated_at = $faker->dateTimeBetween('-1year');
                 $post->author()->associate( $users->random()->id );
                 $post->save();
                 $post->tags()->attach(

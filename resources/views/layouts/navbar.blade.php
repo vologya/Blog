@@ -1,11 +1,12 @@
 <div class="blog-masthead">
   <div class="container">
     <nav class="blog-nav">
-      <a class="blog-nav-item active" href="/">Main Page</a>
-      <a class="blog-nav-item" href="{{ route('posts.create') }}">New Post</a>
-      <a class="blog-nav-item" href="#">Press</a>
-      <a class="blog-nav-item" href="#">New hires</a>
-      <a class="blog-nav-item" href="#">About</a>
+      <a class="blog-nav-item 
+        {{ (request()->is('/') || request()->is('posts')) ? ' active' : '' }}" 
+        href="/">Main Page</a>
+      <a class="blog-nav-item 
+        {{ request()->is('posts/create') ? ' active' : '' }}" 
+        href="{{ route('posts.create') }}">New Post</a>
 
       <ul class="nav navbar-nav navbar-right">
         <!-- Authentication Links -->
