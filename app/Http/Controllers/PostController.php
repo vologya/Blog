@@ -60,16 +60,18 @@ class PostController extends Controller
             'tags' => 'array',
         ]);
 
-        foreach ($validatedData['tags'] as $key => $value) {
-            $validatedData['tags'][$key] = is_numeric($value)
-                ? Tag::findOrFail($value)->id
-                : Tag::firstOrCreate(['name' => $value])->id;
+        if ( isset($validatedData['tags'] ) ) {
+            foreach ($validatedData['tags'] as $key => $value) {
+                $validatedData['tags'][$key] = is_numeric($value)
+                    ? Tag::findOrFail($value)->id
+                    : Tag::firstOrCreate(['name' => $value])->id;
+            }
         }
 
         $post = Post::make($validatedData);
         $post->author()->associate( auth()->user() );
         $post->save();
-        $post->tags()->attach( $validatedData['tags'] );
+        $post->tags()->attach( isset($validatedData['tags']) ?: [] );
 
         return redirect()->route( 'posts.show', $post );
     }
