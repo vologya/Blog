@@ -57,7 +57,7 @@ class PostController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|min:5|max:255',
             'body' => 'required|min:10',
-            'tags' => 'array',
+            'tags' => 'required',
         ]);
 
         if ( isset($validatedData['tags'] ) ) {
@@ -71,7 +71,7 @@ class PostController extends Controller
         $post = Post::make($validatedData);
         $post->author()->associate( auth()->user() );
         $post->save();
-        $post->tags()->attach( isset($validatedData['tags']) ?: [] );
+        $post->tags()->attach( isset($validatedData['tags']) ? $validatedData['tags'] : [] );
 
         return redirect()->route( 'posts.show', $post );
     }
@@ -119,15 +119,17 @@ class PostController extends Controller
             'tags' => 'array',
         ]);
 
-        foreach ($validatedData['tags'] as $key => $value) {
-            $validatedData['tags'][$key] = is_numeric($value)
-                ? Tag::findOrFail($value)->id
-                : Tag::firstOrCreate(['name' => $value])->id;
+        if ( isset($validatedData['tags']) ) {
+            foreach ($validatedData['tags'] as $key => $value) {
+                $validatedData['tags'][$key] = is_numeric($value)
+                    ? Tag::findOrFail($value)->id
+                    : Tag::firstOrCreate(['name' => $value])->id;
+            }
         }
 
         $post->update($validatedData);
         $post->save();
-        $post->tags()->sync( $validatedData['tags'] );
+        $post->tags()->sync( isset($validatedData['tags']) ? $validatedData['tags'] : [] );
 
         return redirect()->route( 'posts.show', $post );
     }

@@ -13,7 +13,9 @@
 
             <p class="blog-post-meta">
                 @foreach ( $post->tags as $tag )
-                    <span class="badge">{{ $tag->name }}</span>
+                    <a href="{{ route('posts.index', ['tag' => $tag->name]) }}">
+                        <span class="badge">{{ $tag->name }}</span>
+                    </a>
                 @endforeach
             </p>
         </div><!-- /.blog-post -->
